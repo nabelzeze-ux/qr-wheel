@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+         <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -6,12 +6,11 @@
     <title>🎰 عجلة حظ X-Team Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* ========== الأساسيات ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { width: 100%; height: 100%; overflow: hidden; }
         
         body {
-            background: #0a0a1a;
+            background: linear-gradient(180deg, #0a0a2e 0%, #0d0d35 50%, #0a0a2e 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,21 +21,25 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* تأثير النيون في الخلفية */
-        body::before {
-            content: '';
+        /* نجوم متحركة في الخلفية */
+        .stars {
             position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, rgba(0,100,255,0.05) 0%, transparent 60%);
-            animation: bgPulse 3s ease-in-out infinite;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
         
-        @keyframes bgPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
         }
         
         .container {
@@ -45,87 +48,67 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 25px;
-            padding: 20px;
+            gap: 20px;
+            padding: 15px;
         }
         
-        /* اللوغو */
-        .logo-text {
-            font-size: 28px;
+        /* اسم البوت */
+        .bot-name {
+            font-size: 26px;
             font-weight: bold;
             color: #ffd700;
-            text-shadow: 0 0 30px #ffd700, 0 0 60px #ff8c00;
-            letter-spacing: 5px;
-            animation: logoGlow 2s ease-in-out infinite;
+            text-shadow: 0 0 20px #ffd700, 0 0 40px #ff8c00;
+            letter-spacing: 4px;
+            animation: glowText 2s ease-in-out infinite;
         }
         
-        @keyframes logoGlow {
+        @keyframes glowText {
             0%, 100% { text-shadow: 0 0 20px #ffd700, 0 0 40px #ff8c00; }
-            50% { text-shadow: 0 0 40px #ffd700, 0 0 80px #ff8c00, 0 0 120px #ffd700; }
+            50% { text-shadow: 0 0 40px #ffd700, 0 0 80px #ff8c00, 0 0 120px #ff4500; }
         }
         
         /* العجلة */
         .wheel-wrapper {
             position: relative;
-            width: min(320px, 85vw);
-            height: min(320px, 85vw);
+            width: min(340px, 90vw);
+            height: min(340px, 90vw);
         }
         
         canvas {
             width: 100%;
             height: 100%;
             display: block;
+            filter: drop-shadow(0 0 30px rgba(255,215,0,0.3));
         }
         
-        /* المؤشر */
+        /* المؤشر - مثلث ذهبي من الأعلى */
         .pointer {
             position: absolute;
-            top: -25px;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 35px;
-            height: 50px;
-            z-index: 10;
-            filter: drop-shadow(0 0 10px #ffd700);
-        }
-        
-        .pointer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            border-left: 18px solid transparent;
-            border-right: 18px solid transparent;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
             border-top: 35px solid #ffd700;
-        }
-        
-        .pointer::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px;
-            height: 18px;
-            background: #ffd700;
-            border-radius: 2px;
+            z-index: 10;
+            filter: drop-shadow(0 0 8px #ffd700);
         }
         
         /* الزر */
         .spin-btn {
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            color: #0a0a1a;
-            border: none;
-            padding: 16px 50px;
+            background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+            color: #1a1a2e;
+            border: 3px solid #ffd700;
+            padding: 14px 45px;
             font-size: 20px;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
             letter-spacing: 2px;
-            box-shadow: 0 0 30px rgba(255,215,0,0.4), 0 8px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(255,215,0,0.5), 0 5px 20px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
-            position: relative;
         }
         
         .spin-btn:active {
@@ -133,20 +116,18 @@
         }
         
         .spin-btn:disabled {
-            background: #555;
-            color: #999;
+            background: #444;
+            color: #888;
+            border-color: #555;
             cursor: not-allowed;
             box-shadow: none;
-            transform: none;
         }
         
-        /* رسالة الفوز */
+        /* نافذة الفوز */
         .win-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: rgba(0,0,0,0.85);
             z-index: 99;
             display: none;
@@ -154,20 +135,18 @@
             align-items: center;
         }
         
-        .win-overlay.show {
-            display: flex;
-        }
+        .win-overlay.show { display: flex; }
         
         .win-message {
-            background: rgba(10,10,26,0.98);
+            background: linear-gradient(135deg, #1a1a3e, #0d0d35);
             border: 2px solid #ffd700;
             border-radius: 20px;
-            padding: 35px 25px;
+            padding: 30px 25px;
             text-align: center;
             color: white;
-            box-shadow: 0 0 80px rgba(255,215,0,0.4);
+            box-shadow: 0 0 80px rgba(255,215,0,0.5);
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-width: 300px;
+            max-width: 320px;
             width: 90%;
         }
         
@@ -176,8 +155,8 @@
             100% { transform: scale(1); }
         }
         
-        .win-message .prize-emoji {
-            font-size: 70px;
+        .win-message .prize-icon {
+            font-size: 60px;
             display: block;
             animation: bounce 0.5s ease infinite alternate;
         }
@@ -188,38 +167,39 @@
         }
         
         .win-message h2 {
-            font-size: 24px;
-            margin: 10px 0;
+            font-size: 22px;
+            margin: 8px 0;
             color: #ffd700;
         }
         
         .win-message p {
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #ccc;
         }
         
         .close-btn {
             background: #ffd700;
             color: #0a0a1a;
             border: none;
-            padding: 12px 35px;
+            padding: 10px 30px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 30px;
             cursor: pointer;
         }
         
-        /* جزيئات الاحتفال */
+        /* جزيئات ذهبية */
         .confetti {
             position: fixed;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
             z-index: 100;
-            animation: confettiFall 3s linear forwards;
+            animation: fall linear forwards;
         }
         
-        @keyframes confettiFall {
+        @keyframes fall {
             0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
@@ -227,21 +207,23 @@
 </head>
 <body>
 
+    <!-- نجوم الخلفية -->
+    <div class="stars" id="stars"></div>
+
     <div class="container">
-        <div class="logo-text">X-TEAM PRO</div>
+        <div class="bot-name">X-TEAM PRO</div>
         
         <div class="wheel-wrapper">
             <div class="pointer"></div>
             <canvas id="wheelCanvas" width="400" height="400"></canvas>
         </div>
         
-        <button class="spin-btn" id="spinBtn" onclick="startSpin()">🚀 دّور واربح!</button>
+        <button class="spin-btn" id="spinBtn" onclick="startSpin()">🎰 دّور واربح!</button>
     </div>
     
-    <!-- نافذة الفوز -->
     <div class="win-overlay" id="winOverlay">
         <div class="win-message">
-            <span class="prize-emoji" id="prizeEmoji">🎉</span>
+            <span class="prize-icon" id="prizeIcon">💰</span>
             <h2>مبروك!</h2>
             <p id="prizeText">ربحت جائزة!</p>
             <button class="close-btn" onclick="closeWinAndSend()">تم 👍</button>
@@ -249,78 +231,104 @@
     </div>
 
     <script>
-        // ========== تهيئة Telegram WebApp ==========
+        // ========== Telegram WebApp ==========
         const tg = window.Telegram.WebApp;
-        tg.expand(); // توسيع كامل الشاشة
+        tg.expand();
         tg.ready();
         
-        // الحصول على user_id
         const urlParams = new URLSearchParams(window.location.search);
         const userId = urlParams.get('user_id') || tg?.initDataUnsafe?.user?.id || '0';
         
-        // ========== إعدادات العجلة ==========
-        const SEGMENTS = 9;
-        const COLORS = [
-            '#ffd700', '#1e90ff', '#32cd32', '#ff6347', '#9370db',
-            '#ff1493', '#00ced1', '#ff8c00', '#7fff00'
+        // ========== الجوائز الجديدة ==========
+        const PRIZES = [
+            { id: 1, label: '150,000 ل.س', icon: '💰', color: '#ffd700', weight: 0.5 },
+            { id: 2, label: '100,000 ل.س', icon: '💰', color: '#ffa500', weight: 1 },
+            { id: 3, label: '50,000 ل.س',  icon: '💎', color: '#ff6347', weight: 1.5 },
+            { id: 4, label: '25,000 ل.س',  icon: '💵', color: '#32cd32', weight: 3 },
+            { id: 5, label: '10,000 ل.س',  icon: '💸', color: '#1e90ff', weight: 14 },
+            { id: 6, label: '5,000 ل.س',   icon: '🪙', color: '#9370db', weight: 20 },
+            { id: 7, label: '1,000 ل.س',   icon: '🪙', color: '#00ced1', weight: 25 },
+            { id: 8, label: '10% شحن',     icon: '📈', color: '#ff1493', weight: 20 },
+            { id: 9, label: '20% شحن',     icon: '📈', color: '#ff8c00', weight: 15 },
         ];
-        const EMOJIS = ['💰', '💰', '💸', '📈', '📈', '🪙', '🎁', '🔄', '🎁'];
         
+        // ========== رسم العجلة ==========
+        const SEGMENTS = PRIZES.length;
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 180;
+        
         let spinning = false;
         let currentAngle = 0;
         let targetPrize = null;
         
-        // ========== رسم العجلة ==========
         function drawWheel(rotation = 0) {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = 185;
             const arcSize = (2 * Math.PI) / SEGMENTS;
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // حلقة خارجية مضيئة
+            // الخلفية الداكنة
             ctx.beginPath();
-            ctx.arc(centerX, centerY, radius + 6, 0, 2 * Math.PI);
+            ctx.arc(centerX, centerY, radius + 15, 0, 2 * Math.PI);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fill();
+            
+            // حلقة خارجية ذهبية
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius + 10, 0, 2 * Math.PI);
             ctx.strokeStyle = '#ffd700';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 4;
             ctx.shadowColor = '#ffd700';
             ctx.shadowBlur = 15;
             ctx.stroke();
             ctx.shadowBlur = 0;
             
+            // الخانات
             for (let i = 0; i < SEGMENTS; i++) {
                 const startAngle = i * arcSize + rotation;
                 const endAngle = startAngle + arcSize;
                 
-                // الخانة
+                // رسم الخانة
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
                 ctx.arc(centerX, centerY, radius, startAngle, endAngle);
                 ctx.closePath();
-                ctx.fillStyle = COLORS[i];
+                ctx.fillStyle = PRIZES[i].color;
                 ctx.fill();
-                ctx.strokeStyle = '#0a0a1a';
+                ctx.strokeStyle = '#0a0a2e';
                 ctx.lineWidth = 2;
                 ctx.stroke();
                 
-                // الإيموجي
+                // النص
                 ctx.save();
                 ctx.translate(centerX, centerY);
                 ctx.rotate(startAngle + arcSize / 2);
                 ctx.textAlign = 'center';
                 ctx.fillStyle = '#fff';
-                ctx.font = 'bold 36px Arial';
-                ctx.fillText(EMOJIS[i], radius * 0.62, 12);
+                
+                // الأيقونة
+                ctx.font = 'bold 28px Arial';
+                ctx.fillText(PRIZES[i].icon, radius * 0.55, -8);
+                
+                // النص
+                ctx.font = 'bold 11px Arial';
+                const lines = PRIZES[i].label.split(' ');
+                if (lines.length > 1) {
+                    ctx.fillText(lines[0], radius * 0.65, 8);
+                    ctx.fillText(lines[1], radius * 0.65, 22);
+                } else {
+                    ctx.fillText(PRIZES[i].label, radius * 0.65, 15);
+                }
+                
                 ctx.restore();
             }
             
             // المركز
             ctx.beginPath();
-            ctx.arc(centerX, centerY, 42, 0, 2 * Math.PI);
-            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 42);
+            ctx.arc(centerX, centerY, 38, 0, 2 * Math.PI);
+            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 38);
             gradient.addColorStop(0, '#1a1a3e');
             gradient.addColorStop(1, '#0a0a1a');
             ctx.fillStyle = gradient;
@@ -328,12 +336,13 @@
             ctx.strokeStyle = '#ffd700';
             ctx.lineWidth = 2;
             ctx.shadowColor = '#ffd700';
-            ctx.shadowBlur = 10;
+            ctx.shadowBlur = 8;
             ctx.stroke();
             ctx.shadowBlur = 0;
             
+            // X في المركز
             ctx.fillStyle = '#ffd700';
-            ctx.font = 'bold 34px Arial';
+            ctx.font = 'bold 30px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('X', centerX, centerY);
@@ -347,127 +356,101 @@
             btn.disabled = true;
             spinning = true;
             
-            // اختيار جائزة عشوائية (للعرض فقط - السيرفر يحدد الجائزة الحقيقية)
-            const prizes = [
-                {id: 1, emoji: '💰', label: '250,000 SYP', angle: 0},
-                {id: 2, emoji: '💰', label: '150,000 SYP', angle: 1},
-                {id: 3, emoji: '💸', label: '25,000 SYP', angle: 2},
-                {id: 4, emoji: '📈', label: '15% بونص', angle: 3},
-                {id: 5, emoji: '📈', label: '20% بونص', angle: 4},
-                {id: 6, emoji: '🪙', label: '10,000 SYP', angle: 5},
-                {id: 7, emoji: '🎁', label: '5,000 SYP', angle: 6},
-                {id: 8, emoji: '🔄', label: 'دورة مجانية', angle: 7},
-                {id: 9, emoji: '🎁', label: 'جائزة مفاجئة', angle: 8},
-            ];
+            // اختيار جائزة بالأوزان
+            const totalWeight = PRIZES.reduce((sum, p) => sum + p.weight, 0);
+            let random = Math.random() * totalWeight;
+            let winnerIndex = 0;
+            for (let i = 0; i < PRIZES.length; i++) {
+                random -= PRIZES[i].weight;
+                if (random <= 0) {
+                    winnerIndex = i;
+                    break;
+                }
+            }
+            targetPrize = PRIZES[winnerIndex];
             
-            targetPrize = prizes[Math.floor(Math.random() * prizes.length)];
-            
-            // حساب زاوية التوقف
+            // حساب الزاوية
             const arcSize = 360 / SEGMENTS;
-            const targetAngle = targetPrize.angle * arcSize + (arcSize / 2);
-            const spins = 5 + Math.floor(Math.random() * 3);
+            const targetAngle = winnerIndex * arcSize + (arcSize / 2);
+            const spins = 6 + Math.floor(Math.random() * 3);
             const totalRotation = spins * 360 + (360 - targetAngle);
             
-            // صوت التكتكة
             playTickSound();
             
-            // تحريك العجلة
             animateWheel(totalRotation).then(() => {
                 stopTickSound();
                 playWinSound();
                 showWin(targetPrize);
-                
-                // إرسال النتيجة للبوت
                 sendResult(targetPrize);
             });
         }
         
-        // ========== تحريك العجلة ==========
+        // ========== تحريك ==========
         function animateWheel(totalRotation) {
             return new Promise((resolve) => {
-                const duration = 4000;
+                const duration = 4500;
                 const startTime = performance.now();
                 const startAngle = currentAngle;
                 
-                function easeOutCubic(t) {
-                    return 1 - Math.pow(1 - t, 3);
-                }
+                function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
                 
                 function animate(currentTime) {
-                    const elapsed = currentTime - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const eased = easeOutCubic(progress);
-                    
-                    currentAngle = startAngle + totalRotation * eased;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    currentAngle = startAngle + totalRotation * easeOutCubic(progress);
                     drawWheel((currentAngle * Math.PI) / 180);
                     
-                    if (progress < 1) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        currentAngle = currentAngle % 360;
-                        resolve();
-                    }
+                    if (progress < 1) requestAnimationFrame(animate);
+                    else { currentAngle = currentAngle % 360; resolve(); }
                 }
-                
                 requestAnimationFrame(animate);
             });
         }
         
-        // ========== أصوات (باستخدام Web Audio API) ==========
-        let tickInterval;
-        let audioCtx;
+        // ========== أصوات ==========
+        let tickInterval, audioCtx;
         
         function playTickSound() {
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                let tickCount = 0;
+                let count = 0;
                 tickInterval = setInterval(() => {
-                    if (tickCount < 30) {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.frequency.value = 800 + Math.random() * 400;
-                        gain.gain.value = 0.05;
-                        osc.start();
-                        osc.stop(audioCtx.currentTime + 0.03);
-                        tickCount++;
+                    if (count < 40) {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g); g.connect(audioCtx.destination);
+                        o.frequency.value = 600 + Math.random() * 300;
+                        g.gain.value = 0.06;
+                        o.start(); o.stop(audioCtx.currentTime + 0.03);
+                        count++;
                     }
-                }, 80);
+                }, 70);
             } catch(e) {}
         }
         
-        function stopTickSound() {
-            if (tickInterval) clearInterval(tickInterval);
-        }
+        function stopTickSound() { if (tickInterval) clearInterval(tickInterval); }
         
         function playWinSound() {
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                // نغمة احتفالية بسيطة
-                const notes = [523, 659, 784, 1047];
-                notes.forEach((freq, i) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.frequency.value = freq;
-                    gain.gain.value = 0.08;
-                    osc.start(audioCtx.currentTime + i * 0.15);
-                    osc.stop(audioCtx.currentTime + i * 0.15 + 0.2);
+                [523, 659, 784, 1047].forEach((f, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.frequency.value = f; g.gain.value = 0.1;
+                    o.start(audioCtx.currentTime + i * 0.12);
+                    o.stop(audioCtx.currentTime + i * 0.12 + 0.25);
                 });
             } catch(e) {}
         }
         
         // ========== عرض الفوز ==========
         function showWin(prize) {
-            document.getElementById('prizeEmoji').textContent = prize.emoji;
+            document.getElementById('prizeIcon').textContent = prize.icon;
             document.getElementById('prizeText').textContent = `ربحت ${prize.label}!`;
             document.getElementById('winOverlay').classList.add('show');
             createConfetti();
         }
         
-        // ========== إغلاق وإرسال النتيجة ==========
         function closeWinAndSend() {
             document.getElementById('winOverlay').classList.remove('show');
             document.getElementById('spinBtn').disabled = false;
@@ -476,37 +459,49 @@
         }
         
         function sendResult(prize) {
-            // إرسال النتيجة للبوت عبر Telegram WebApp
             const data = JSON.stringify({
                 action: 'spin_result',
                 user_id: userId,
                 prize_id: prize.id,
                 prize_label: prize.label
             });
-            
-            if (tg && tg.sendData) {
-                tg.sendData(data);
-                // سيغلق تلقائياً بعد الإرسال
-            }
+            if (tg && tg.sendData) tg.sendData(data);
         }
         
-        // ========== جزيئات الاحتفال ==========
+        // ========== جزيئات ==========
         function createConfetti() {
-            const colors = ['#ffd700', '#ff8c00', '#1e90ff', '#32cd32', '#ff1493', '#9370db'];
-            for (let i = 0; i < 40; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.top = -(Math.random() * 30) + 'px';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDelay = Math.random() * 1.5 + 's';
-                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                document.body.appendChild(confetti);
+            const colors = ['#ffd700', '#ff8c00', '#ff4500', '#1e90ff', '#32cd32', '#ff1493'];
+            for (let i = 0; i < 50; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti';
+                el.style.left = Math.random() * 100 + '%';
+                el.style.top = -(Math.random() * 30) + 'px';
+                el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                el.style.animationDelay = Math.random() * 2 + 's';
+                el.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(el);
             }
         }
         
-        // ========== الرسم الأولي ==========
+        // ========== نجوم الخلفية ==========
+        function createStars() {
+            const stars = document.getElementById('stars');
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = (Math.random() * 3 + 1) + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                stars.appendChild(star);
+            }
+        }
+        
+        // ========== بدء ==========
+        createStars();
         drawWheel();
     </script>
 </body>
-  </html>
+</html>   
